@@ -30,16 +30,16 @@ function broadcast(data: BroadcastMessage) {
 
 // HTTP API to receive messages
 app.post("/message", (req: Request, res: Response) => {
-  const { message } = req.body;
+  const data = req.body;
 
   console.log("Received message");
 
-  if (!message || !message.id || !message.table || !message.time) {
+  if (!data || !data.id || !data.table || !data.time) {
     console.log("Invalid message");
     return res.status(400).json({ error: "Invalid message format" });
   }
 
-  broadcast({ type: "message", ...message });
+  broadcast({ type: "message", ...data });
   res.json({ status: "received" });
 });
 
