@@ -2,9 +2,15 @@ import express, { Request, Response } from "express";
 import { createServer } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 
-interface Message {
-  type: string;
+interface BroadcastMessage extends MessageSchema {
+  type: "message";
+}
+
+interface MessageSchema {
+  id: string;
+  table: number;
   message: string;
+  time: string;
 }
 
 const app = express();
@@ -14,7 +20,7 @@ const wss = new WebSocketServer({ server });
 app.use(express.json());
 
 // Broadcast helper
-function broadcast(data: Message) {
+function broadcast(data: BroadcastMessage) {
   wss.clients.forEach((client: WebSocket) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify(data));
@@ -25,10 +31,15 @@ function broadcast(data: Message) {
 // HTTP API to receive messages
 app.post("/message", (req: Request, res: Response) => {
   const { message } = req.body;
-  if (typeof message !== "string") {
-    return res.status(400).json({ error: "Message must be a string." });
+
+  console.log("Received message");
+
+  if (!message || !message.id || !message.table || !message.time) {
+    console.log("Invalid message");
+    return res.status(400).json({ error: "Invalid message format" });
   }
-  broadcast({ type: "new-message", message });
+
+  broadcast({ type: "message", ...message });
   res.json({ status: "received" });
 });
 
