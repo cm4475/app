@@ -29,6 +29,7 @@ function broadcast(data: BroadcastMessage) {
 }
 
 app.options("/message", (req: Request, res: Response) => {
+  console.log(req);
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "POST, OPTIONS");
   return res.status(204);
