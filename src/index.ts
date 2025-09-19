@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { createServer } from "http";
 import { WebSocketServer, WebSocket } from "ws";
+import cors from "cors";
 
 interface BroadcastMessage extends MessageSchema {
   type: "message";
@@ -18,6 +19,7 @@ const server = createServer(app);
 const wss = new WebSocketServer({ server });
 
 app.use(express.json());
+app.use(cors());
 
 // Broadcast helper
 function broadcast(data: BroadcastMessage) {
@@ -27,13 +29,6 @@ function broadcast(data: BroadcastMessage) {
     }
   });
 }
-
-app.options("/message", (req: Request, res: Response) => {
-  console.log(req);
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "POST, OPTIONS");
-  return res.status(204);
-});
 
 // HTTP API to receive messages
 app.post("/message", (req: Request, res: Response) => {
