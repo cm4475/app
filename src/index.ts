@@ -28,6 +28,12 @@ function broadcast(data: BroadcastMessage) {
   });
 }
 
+app.options("/message", (req: Request, res: Response) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "POST, OPTIONS");
+  return res.status(204);
+});
+
 // HTTP API to receive messages
 app.post("/message", (req: Request, res: Response) => {
   const data = req.body;
